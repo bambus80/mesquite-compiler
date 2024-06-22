@@ -1,0 +1,12 @@
+define (name) => full_text => text {
+  return join("Hello, ", name, "!");
+}
+
+define (null) => main {
+  define var username = text "Iga";
+  say(full_text(username));
+}
+
+on green_flag_click {
+  main;
+}

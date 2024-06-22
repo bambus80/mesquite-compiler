@@ -1,0 +1,100 @@
+{
+  "hats": {
+    "green_flag_click": {
+      "opcode": "event_whenflagclicked",
+      "inputs": {},
+      "fields": {}
+    },
+    "key_pressed": {
+      "opcode": "event_whenkeypressed",
+      "inputs": {},
+      "fields": {}
+    },
+    "sprite_clicked": {
+      "opcode": "event_whenthisspriteclicked",
+      "inputs": {},
+      "fields": {}
+    },
+    "backdrop_switch": {
+      "opcode": "event_whenbackdropswitchesto",
+      "inputs": {},
+      "fields": {
+        "BACKDROP": [
+          "backdrop1",
+          null
+        ]
+      }
+    },
+    "loudness_exceeds": {
+      "opcode": "event_whengreaterthan",
+      "inputs": {
+        "VALUE": [
+          1,
+          [
+            4,
+            "&ARG1"
+          ]
+        ]
+      },
+      "fields": {
+        "WHENGREATERTHANMENU": [
+          "LOUDNESS",
+          null
+        ]
+      }
+    },
+    "timer_exceeds": {
+      "opcode": "event_whengreaterthan",
+      "inputs": {
+        "VALUE": [
+          1,
+          [
+            4,
+            "&ARG1"
+          ]
+        ]
+      },
+      "fields": {
+        "WHENGREATERTHANMENU": [
+          "TIMER",
+          null
+        ]
+      }
+    },
+    "receive_broadcast": {
+      "opcode": "event_whenbroadcastreceived",
+      "inputs": {},
+      "fields": {
+        "BROADCAST_OPTION": [
+          "&BROADCAST_NAME",
+          "&POINTER"
+        ]
+      }
+    },
+    "create_clone": {
+      "opcode": "control_start_as_clone",
+      "inputs": {},
+      "fields": {}
+    }
+  },
+  "blocks": {
+    "green_flag_click": {
+      "opcode": "motion_movesteps",
+      "inputs": {
+        "STEPS": [
+          3,
+          [
+            12,
+            "arg1",
+            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+          ],
+          [
+            4,
+            "10"
+          ]
+        ]
+      },
+      "fields": {}
+    }
+  }
+}

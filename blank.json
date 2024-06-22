@@ -1,0 +1,30 @@
+{
+  "isStage": false,
+  "name": "Sprite1",
+  "variables": {},
+  "lists": {},
+  "broadcasts": {},
+  "blocks": {},
+  "comments": {
+    "Ph*6FsPSZ:@VJ1rzLUA@": {
+      "blockId": null,
+      "x": 200,
+      "y": 100,
+      "width": 400,
+      "height": 200,
+      "minimized": false,
+      "text": "Compiled with Mesquite Compiler 1.0\n\nThis code is the output of the Mesquite compiler and is not supposed to be human readable."
+    }
+  },
+  "currentCostume": 0,
+  "costumes": [],
+  "sounds": [],
+  "volume": 100,
+  "visible": true,
+  "x": 0,
+  "y": 0,
+  "size": 100,
+  "direction": 90,
+  "draggable": false,
+  "rotationStyle": "all around"
+}

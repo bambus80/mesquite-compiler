@@ -1,0 +1,61 @@
+{
+  "isStage": false,
+  "name": "Sprite1",
+  "variables": {},
+  "lists": {},
+  "broadcasts": {},
+  "blocks": {
+    "%,$5Az][eP|{{R;NqD`3": {
+      "opcode": "event_whenflagclicked",
+      "next": "8Pxb+P8-f|;6#0nm,*$e",
+      "parent": null,
+      "inputs": {},
+      "fields": {},
+      "shadow": false,
+      "topLevel": true,
+      "x": 0,
+      "y": 0
+    },
+    "8Pxb+P8-f|;6#0nm,*$e": {
+      "opcode": "looks_say",
+      "next": null,
+      "parent": "%,$5Az][eP|{{R;NqD`3",
+      "inputs": { "MESSAGE": [1, [10, "Hello!"]] },
+      "fields": {},
+      "shadow": false,
+      "topLevel": false
+    }
+  },
+  "comments": {
+    "Ph*6FsPSZ:@VJ1rzLUA@": {
+      "blockId": null,
+      "x": 200,
+      "y": 100,
+      "width": 400,
+      "height": 300,
+      "minimized": false,
+      "text": "Compiled from Mesquite 1.0\n\nThis code is the output of the Mesquite compiler and is not supposed to be human readable."
+    }
+  },
+  "currentCostume": 0,
+  "costumes": [
+    {
+      "name": "costume1",
+      "bitmapResolution": 1,
+      "dataFormat": "svg",
+      "assetId": "927d672925e7b99f7813735c484c6922",
+      "md5ext": "927d672925e7b99f7813735c484c6922.svg",
+      "rotationCenterX": 30.74937882782359,
+      "rotationCenterY": 58.864768144346826
+    }
+  ],
+  "sounds": [],
+  "volume": 100,
+  "visible": true,
+  "x": 0,
+  "y": 0,
+  "size": 100,
+  "direction": 90,
+  "draggable": false,
+  "rotationStyle": "all around"
+}
