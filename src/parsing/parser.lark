@@ -1,0 +1,96 @@
+%import common.ESCAPED_STRING
+%import common.SIGNED_NUMBER
+%import common.WS
+
+%ignore WS
+
+?start: entries+
+
+?entries: sprite
+        | stage
+        | library
+        | use_stmt
+
+use_stmt: "use " (keyword|string) ["as" keyword] ";"
+
+string : ESCAPED_STRING
+number : SIGNED_NUMBER
+KEYWORD: ("a".."z" | "_")+
+keyword: KEYWORD
+
+sprite: "sprite" keyword "{" sprite_stmts* "}"
+stage: "stage" "{" sprite_stmts* "}"
+library: "library" "{" library_stmts* "}"
+
+?sprite_stmts: (hat|hat_custom_block|costume_stmt)
+?library_stmts: (hat_custom_block|hat_init)
+
+costume_stmt: "costume" (keyword|string) ["as" keyword] ";"
+
+hat: "on" keyword arguments? "{" code_stmts* "}" ";"?
+
+hat_init: "init" "{" code_stmts* "}" ";"?
+
+hat_custom_block: "func" keyword arguments_custom_block? "{" code_stmts* "}" ";"?
+
+hat_loop: keyword arguments? "{" code_stmts* "}" ";"?
+
+if_loop: if_loop_if if_loop_elif* if_loop_else? ";"?
+
+if_loop_if: "if" "("? expression ")"? "{" code_stmts* "}" 
+if_loop_elif: ("elif"|"elseif") "("? expression ")"? "{" code_stmts* "}" 
+if_loop_else: "else" "{" code_stmts* "}" 
+
+code_stmts: variable_define
+          | variable_set
+          | function
+          | hat_loop
+          | if_loop
+
+variable_define: var_locality var_type type_nolist? keyword ["=" expression] ";"?
+
+variable_set: keyword variable_set_ops expression ";"?
+
+!variable_set_ops: ("=" | "+="| "-=" | "*=" | "/=" )
+
+function: keyword (arguments|";"|arguments ";")
+
+expression: (string | number)
+          | "true" | "True" -> true
+          | "false" | "False" -> false
+          | math_expr
+          | function
+          | array
+          | keyword
+
+!math_expr_ops: ("+"|"-"|"/"|"*"|"%"|"<"|"<="|"!="|"=="|">"|">=")
+
+math_expr: | "(" expression ")"
+           | expression math_expr_ops expression
+           | "not" expression
+
+arguments: "(" list? ")"
+
+arguments_custom_block: "(" list_custom_block? ")"
+
+list_custom_block: keyword_custom_block ("," keyword_custom_block)*
+
+keyword_custom_block: keyword [":" type]
+
+list: expression ("," expression)*
+array: "[" list "]"
+
+!var_locality: ("sprite"|"global"|"cloud") 
+
+!var_type: ("const"|"var"|"list") 
+
+type_nolist.1: "number" -> type_number
+          | "string" -> type_string
+          | "bool" -> type_bool
+          | "value" -> type_value
+          | keyword -> type_custom
+
+type: type_nolist
+    | type_list
+
+type_list: "list<" type_nolist? ">"
