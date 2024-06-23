@@ -1,5 +1,5 @@
 from src.minify import minify
-from tokenize_code import tokenize_code
+from src.tokenize_code import tokenize_code
 import os
 import argparse
 
