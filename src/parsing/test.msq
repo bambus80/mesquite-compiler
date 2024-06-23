@@ -1,0 +1,5 @@
+library {
+    init {
+        global var number six = true;
+    }
+}

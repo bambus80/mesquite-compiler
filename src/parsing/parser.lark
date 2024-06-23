@@ -56,12 +56,14 @@ variable_set: keyword variable_set_ops expression ";"?
 function: keyword (arguments|";"|arguments ";")
 
 expression: (string | number)
-          | "true" | "True" -> true
-          | "false" | "False" -> false
+          | TRUE
+          | FALSE
           | math_expr
-          | function
           | array
           | keyword
+
+TRUE.6: "true" | "True"
+FALSE.6: "false" | "False"
 
 !math_expr_ops: ("+"|"-"|"/"|"*"|"%"|"<"|"<="|"!="|"=="|">"|">=")
 
@@ -82,14 +84,14 @@ optional: "optional"
 list: expression ("," expression)*
 array: "[" list "]"
 
-!var_locality: ("sprite"|"global"|"cloud") 
+!var_locality: ("sprite"|"global"|"cloud")
 
-!var_type: ("const"|"var"|"list") 
+!var_type: ("const"|"var"|"list")
 
 type_nolist.1: "number" -> type_number
           | "string" -> type_string
           | "bool" -> type_bool
-          | "value" -> type_value
+          | "value"|"any" -> type_value
           | keyword -> type_custom
 
 type: type_nolist

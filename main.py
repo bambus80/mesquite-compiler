@@ -12,10 +12,5 @@ if __name__ == "__main__":
 
     with open(file_dir, 'r') as f:
         print(f"Compiling '{file_dir}'...")
-        code = minify(f.read().split('\n'))
-
-        tokenized_output = []
-        for line in code:
-            tokenized_output = tokenize_code(line, tokens=tokenized_output)["tokens"]
         print(tokenized_output)
         # TODO: Zip and save to .SPRITE3 and print info about the compiled sprite (eg. sprite size)
