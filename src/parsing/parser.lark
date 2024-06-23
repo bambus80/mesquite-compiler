@@ -75,7 +75,9 @@ arguments_custom_block: "(" list_custom_block? ")"
 
 list_custom_block: keyword_custom_block ("," keyword_custom_block)*
 
-keyword_custom_block: keyword [":" type]
+keyword_custom_block: keyword [":" optional? type]
+
+optional: "optional"
 
 list: expression ("," expression)*
 array: "[" list "]"
