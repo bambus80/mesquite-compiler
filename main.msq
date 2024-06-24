@@ -1,12 +1,53 @@
-define (name) => full_text => text {
-  return join("Hello, ", name, "!");
+use foo;
+use foo2 as bar;
+use "foo3" as qux;
+
+library {
+    init {
+        foo;
+        foo(1)
+        foo(1);
+    }
+    func foo(a: optional number){
+        say("hello!");
+    }
+    func bar(b: number){
+        say("hello!");
+        say("hello!");
+    }
 }
 
-define (null) => main {
-  define var username = text "Iga";
-  say(full_text(username));
+stage {
+    on green_flag_clicked {
+        if x > 1 {
+            say("x gt 1")
+        } elif x < 1 {
+            say("x lt 1")
+        } else {
+            say ("x eq 1")
+        }
+        say("x is real")
+    }
 }
 
-on green_flag_click {
-  main;
+sprite foosprite {
+    costume "foo.svg" as foocostume;
+    sound "pop.wav" as boom;
+    init {
+        global var custom_type x = 10;
+        x -= 2
+        global list number x = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        while (x <= 10) {
+            x += 1
+            say(x);
+            sprite var bool x = not (false);
+            sprite var bool y = not x;
+        }
+        test {
+            say("a")
+        }
+    }
+    on green_flag_clicked ("example") {
+        say("hi!")
+    }
 }

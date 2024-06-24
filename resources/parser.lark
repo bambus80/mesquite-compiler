@@ -4,7 +4,7 @@
 
 %ignore WS
 
-?start: entries+
+?start: entries*
 
 ?entries: sprite
         | stage
@@ -15,17 +15,18 @@ use_stmt: "use " (keyword|string) ["as" keyword] ";"
 
 string : ESCAPED_STRING
 number : SIGNED_NUMBER
-KEYWORD: ("a".."z" | "_")+
+KEYWORD: ("a".."z"|"0".."9"| "_")+
 keyword: KEYWORD
 
 sprite: "sprite" keyword "{" sprite_stmts* "}"
 stage: "stage" "{" sprite_stmts* "}"
 library: "library" "{" library_stmts* "}"
 
-?sprite_stmts: (hat|hat_custom_block|costume_stmt)
+?sprite_stmts: (hat|hat_custom_block|hat_init|costume_stmt|sound_stmt)
 ?library_stmts: (hat_custom_block|hat_init)
 
 costume_stmt: "costume" (keyword|string) ["as" keyword] ";"
+sound_stmt: "sound" (keyword|string) ["as" keyword] ";"
 
 hat: "on" keyword arguments? "{" code_stmts* "}" ";"?
 
@@ -47,7 +48,7 @@ code_stmts: variable_define
           | hat_loop
           | if_loop
 
-variable_define: var_locality var_type type_nolist? keyword ["=" expression] ";"?
+variable_define: var_locality var_type type? keyword ["=" expression] ";"?
 
 variable_set: keyword variable_set_ops expression ";"?
 
@@ -56,8 +57,8 @@ variable_set: keyword variable_set_ops expression ";"?
 function: keyword (arguments|";"|arguments ";")
 
 expression: (string | number)
-          | TRUE
-          | FALSE
+          | TRUE -> true
+          | FALSE -> false
           | math_expr
           | array
           | keyword
@@ -67,9 +68,13 @@ FALSE.6: "false" | "False"
 
 !math_expr_ops: ("+"|"-"|"/"|"*"|"%"|"<"|"<="|"!="|"=="|">"|">=")
 
-math_expr: | "(" expression ")"
+math_expr: | parenthesis_expression
            | expression math_expr_ops expression
-           | "not" expression
+           | not_expr expression
+
+parenthesis_expression.-100: "(" expression ")"
+
+not_expr: "not"
 
 arguments: "(" list? ")"
 
@@ -77,7 +82,7 @@ arguments_custom_block: "(" list_custom_block? ")"
 
 list_custom_block: keyword_custom_block ("," keyword_custom_block)*
 
-keyword_custom_block: keyword [":" optional? type]
+keyword_custom_block: keyword [":" (optional type | type)]
 
 optional: "optional"
 
@@ -88,13 +93,8 @@ array: "[" list "]"
 
 !var_type: ("const"|"var"|"list")
 
-type_nolist.1: "number" -> type_number
+type.-1   : "number" -> type_number
           | "string" -> type_string
           | "bool" -> type_bool
           | "value"|"any" -> type_value
           | keyword -> type_custom
-
-type: type_nolist
-    | type_list
-
-type_list: "list<" type_nolist? ">"
