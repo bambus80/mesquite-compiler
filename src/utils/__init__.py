@@ -1,3 +1,8 @@
+from random import choices
+from hashlib import md5
+import string
+
+
 def pretty_print_program(program, indent=0):
     def _format_object(obj, level=0):
         if isinstance(obj, (str, int, float, bool, type(None))):
@@ -48,3 +53,10 @@ def pretty_print_program(program, indent=0):
         return '\n'.join(lines)
 
     print(_format_object(program))
+
+
+def block_id(length=18):
+    return ''.join(choices(string.ascii_letters + string.digits, k=length))
+
+def md5ext(path):
+    return md5(open(path,'rb').read()).hexdigest()
