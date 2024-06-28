@@ -6,6 +6,3 @@ This compiler is not yet functional. There's also no documentation for it as in 
 
 ### Usage
 `main.py -f /path/to/file.msq`
-
-### Libraries
-Stantard libraries are stored in the `/lib` folder. All libraries are in a JSON format and contain two fields, `hats` and `blocks`. Hats are used for events, while blocks are used for regular blocks of code.
