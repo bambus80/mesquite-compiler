@@ -1,23 +1,39 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import Literal
 from src.utils import block_id
 
 
 @dataclass
 class ScratchBlock:
-    id = ""
-    opcode = ""
+    id: str = block_id
+    opcode: str = ""
     next = None
     parent = None
-    inputs = {}
-    fields = {}
-    shadow = False
-    topLevel = False if not parent else True
+    inputs: dict = field(default_factory=dict)
+    fields: dict = field(default_factory=dict)
+    shadow: bool = False
+    topLevel: bool = True if not parent else False
 
 
 @dataclass
-class ScratchPrototypeBlock(ScratchBlock):
-    mutation = {}
+class ScratchMutatedBlock(ScratchBlock):
+    mutation: dict = field(default_factory=dict)
+
+
+class BlockColumn:
+    def __init__(self) -> None:
+        self.list: list[ScratchBlock] = []
+    def parse(self) -> list:
+        parsed: list[dict] = []
+        for i in range(0, len(self.list) - 1):
+            parent = self.list[i - 1] if i > 0 else None
+            current = self.list[i]
+            next = self.list[i + 1] if i <= len(self.list) - 1 else None
+
+            current.parent = parent.id
+            current.next = next.id
+            parsed.append(asdict(current))
+        return parsed
 
 
 @dataclass
@@ -33,10 +49,10 @@ class ScratchTarget:
             "blockId": None,
             "x": 200,
             "y": 100,
-            "width": 400,
-            "height": 200,
+            "width": 700,
+            "height": 500,
             "minimized": False,
-            "text":"Compiled from Mesquite code.\n\nThis code is the output of the Mesquite compiler and is not supposed to be human readable."
+            "text":"Compiled from Mesquite.\n\nThis code is the output of the Mesquite compiler and is not supposed to be human readable."
         }
     }
     currentCostume: int = 0
@@ -48,6 +64,8 @@ class ScratchTarget:
 
 @dataclass
 class Stage(ScratchTarget):
+    isStage: bool = True
+    name: str = "Stage"
     tempo: int = 60
     videoState: Literal["on", "off", "on-flipped"] = "off"
     textToSpeechLanguage: str = "English"
@@ -86,16 +104,24 @@ class Sound(ScratchAsset):
 
 
 @dataclass
+class ScratchMonitor:
+    # TODO: Support monitors
+    ...
+
+
+@dataclass
+class ScratchExtension:
+    # TODO: Support Scratch extensions
+    ...
+
+
+@dataclass
 class ScratchProject:
-    targets: list = field(default_factory=list)
-    monitors: list = field(default_factory=list)
-    extensions: list = field(default_factory=list)
+    targets: list[ScratchTarget] = field(default_factory=list)
+    monitors: list[ScratchMonitor] = field(default_factory=list)
+    extensions: list[ScratchExtension] = field(default_factory=list)
     meta = {
         "semver": "3.0.0",
         "vm": "0.0.0",
         "agent": "",
-        "platform": { 
-            "name": "Mesquite Compiler",
-            "url": "https://github.com/bambus80/mesquite-compiler"
-        }
     }
