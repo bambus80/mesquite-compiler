@@ -1,9 +1,11 @@
 from pathlib import Path
 from typing import Any, Callable
 
+import lark.exceptions
 from lark import Transformer, Lark, Token
 
 from src.parsing.classes import *
+from src.logging import *
 from src.utils import pretty_print_program
 
 
@@ -178,13 +180,16 @@ class Reformatter(Transformer):
         return ifloop
 
 
-
 with open(Path("resources/parser.lark"), "r") as larkfile:
     parser = Lark(larkfile, parser='lalr')
 
 
 def parse(string: str) -> Program:
-    tree = parser.parse(string)
+    try:
+        tree = parser.parse(string)
+    except lark.exceptions.UnexpectedToken as e:
+        log_error(str(e))
+        exit(1)
     reformatted = Reformatter().transform(tree)
     if not isinstance(reformatted, Program):
         program = Program([], [])
