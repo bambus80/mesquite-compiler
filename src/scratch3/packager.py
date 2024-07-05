@@ -1,24 +1,20 @@
 from src.parsing.classes import *
 from src.scratch3.classes import *
 from src.utils import block_id
+from src.asset import serialize_asset
+from src.logging import *
 
 
 def parse_hat_code(code: list) -> None:
     pass
 
 
-def add_asset_to_sprite(asset: ScratchAsset) -> None:
-    pass
-
-
-def process_hats(hats: list[Hat]) -> list:
+def process_hats(hats: list[Hat], project_cwd: str) -> list:
     transpiled = []
     for hat in hats:
         col = BlockColumn()
-        if isinstance(hat, CostumeStatement):
-            pass
-        if isinstance(hat, SoundStatement):
-            pass
+        if isinstance(hat, CostumeStatement) or isinstance(hat, SoundStatement):
+            serialize_asset(hat, project_cwd)
         if isinstance(hat, InitializationHat):
             pass
         if isinstance(hat, OnHat):
@@ -60,7 +56,7 @@ def translate_block(block) -> dict | list:
         ]
 
 
-def generate_project(prog: Program) -> ScratchProject:
+def generate_project(prog: Program, project_cwd: str) -> ScratchProject:
     project = ScratchProject()
 
     for component in prog.components:
@@ -68,13 +64,14 @@ def generate_project(prog: Program) -> ScratchProject:
             pass
         elif isinstance(component, StageComponent):
             target = Stage()
-            target.blocks = process_hats(component.hats)
+            target.blocks = process_hats(component.hats, project_cwd)
             project.targets.append(target)
         elif isinstance(component, SpriteComponent):
             target = Sprite(name=component.sprite)
-            target.blocks = process_hats(component.hats)
+            target.blocks = process_hats(component.hats, project_cwd)
             project.targets.append(target)
         else:
-            Exception(f"Unrecognized component: {type(component)}")
+            log_error(f"Unrecognized component: {type(component)}")
+            exit(1)
 
     return project
