@@ -1,7 +1,6 @@
-from queue import Full
 from src.parsing.classes import *
 from src.scratch3.classes import *
-from src.utils import block_id, md5ext
+from src.utils import block_id
 
 
 def parse_hat_code(code: list) -> None:
@@ -16,16 +15,22 @@ def process_hats(hats: list[Hat]) -> list:
     transpiled = []
     for hat in hats:
         col = BlockColumn()
+        if isinstance(hat, CostumeStatement):
+            pass
+        if isinstance(hat, SoundStatement):
+            pass
+        if isinstance(hat, InitializationHat):
+            pass
         if isinstance(hat, OnHat):
             if hat.on_keyword == "green_flag_clicked":
                 col.list.append(ScratchBlock(opcode="event_whenflagclicked"))
-        for block in hat.code:
-            translate_block(block)
-        transpiled.append(col.parse())
+            for block in hat.code:
+                translate_block(block)
+            transpiled.append(col.parse())
     return transpiled
 
 
-def translate_block(block) -> dict:
+def translate_block(block) -> dict | list:
     if isinstance(block, IfHat):
         pass
     elif isinstance(block, SpriteStatement):
@@ -63,10 +68,11 @@ def generate_project(prog: Program) -> ScratchProject:
             pass
         elif isinstance(component, StageComponent):
             target = Stage()
-            process_hats(component.hats)
+            target.blocks = process_hats(component.hats)
             project.targets.append(target)
         elif isinstance(component, SpriteComponent):
-            target = Sprite()
+            target = Sprite(name=component.sprite)
+            target.blocks = process_hats(component.hats)
             project.targets.append(target)
         else:
             Exception(f"Unrecognized component: {type(component)}")

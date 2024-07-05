@@ -23,6 +23,7 @@ class ScratchMutatedBlock(ScratchBlock):
 class BlockColumn:
     def __init__(self) -> None:
         self.list: list[ScratchBlock] = []
+
     def parse(self) -> list:
         parsed: list[dict] = []
         for i in range(0, len(self.list) - 1):
@@ -44,17 +45,7 @@ class ScratchTarget:
     lists: dict = field(default_factory=dict)
     broadcasts: dict = field(default_factory=dict)
     blocks: dict = field(default_factory=dict)
-    comments: dict = {
-        block_id: {
-            "blockId": None,
-            "x": 200,
-            "y": 100,
-            "width": 700,
-            "height": 500,
-            "minimized": False,
-            "text":"Compiled from Mesquite.\n\nThis code is the output of the Mesquite compiler and is not supposed to be human readable."
-        }
-    }
+    comments: dict = field(default_factory=dict)
     currentCostume: int = 0
     costumes: list = field(default_factory=list)
     sounds: list = field(default_factory=list)
@@ -68,6 +59,7 @@ class Stage(ScratchTarget):
     name: str = "Stage"
     tempo: int = 60
     videoState: Literal["on", "off", "on-flipped"] = "off"
+    videoTransparency: int = 50
     textToSpeechLanguage: str = "English"
 
 
