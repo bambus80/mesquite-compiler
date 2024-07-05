@@ -55,8 +55,9 @@ def pretty_print_program(program, indent=0):
     print(_format_object(program))
 
 
-def block_id(length=18):
+def block_id(length=18) -> str:
     return ''.join(choices(string.ascii_letters + string.digits, k=length))
 
-def md5ext(path):
-    return md5(open(path,'rb').read()).hexdigest()
+
+def md5ext(path) -> str:
+    return md5(open(path, 'rb').read()).hexdigest()
