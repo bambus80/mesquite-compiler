@@ -32,7 +32,7 @@ convertible_sound_formats = {  # TODO: Convert sound formats to native ones
 
 
 def serialize_asset(asset: CostumeStatement | SoundStatement, project_cwd: str) -> ScratchAsset:
-    file_path = os.path.join(project_cwd, asset.import_from)
+    file_path = os.path.normpath(os.path.join(project_cwd, asset.import_from))
     file_format, _ = mimetypes.guess_type(file_path)
 
     new_asset = None
@@ -65,7 +65,7 @@ def serialize_asset(asset: CostumeStatement | SoundStatement, project_cwd: str) 
     try:
         with open(file_path, "rb") as file:
             asset_md5 = md5ext(file.read())
-    except OSError:
+    except FileNotFoundError:
         log_error(f"Could not access {file_path}")
         exit(1)
 
@@ -79,6 +79,7 @@ def serialize_asset(asset: CostumeStatement | SoundStatement, project_cwd: str) 
             new_asset.rotationCenterY = 0
         elif new_asset.dataFormat in ["png", "bmp", "jpg", "jpeg", "gif"]:
             new_asset.bitmapResolution = 1
+
     elif isinstance(new_asset, Sound):
         if new_asset.dataFormat == "wav":
             sample_data = get_wav_sample_data(file_path)

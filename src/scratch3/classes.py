@@ -27,13 +27,13 @@ class BlockColumn:
     def parse(self) -> list:
         parsed: list[dict] = []
         for i in range(0, len(self.list) - 1):
-            parent = self.list[i - 1] if i > 0 else None
-            current = self.list[i]
-            next = self.list[i + 1] if i <= len(self.list) - 1 else None
+            parent_block = self.list[i - 1] if i > 0 else None
+            current_block = self.list[i]
+            next_block = self.list[i + 1] if i <= len(self.list) - 1 else None
 
-            current.parent = parent.id
-            current.next = next.id
-            parsed.append(asdict(current))
+            current_block.parent = parent_block.id
+            current_block.next = next_block.id
+            parsed.append(asdict(current_block))
         return parsed
 
 
