@@ -1,5 +1,4 @@
 import os.path
-
 from src.parsing import parse
 from src.parsing.classes import *
 from src.scratch3.classes import *
@@ -10,6 +9,7 @@ from src.logging import *
 
 
 def parse_hat_code(code: list) -> None:
+    # TODO: Parse code inside hats
     pass
 
 
@@ -23,6 +23,7 @@ def process_hats(hats: list[Hat], project_cwd: str) -> list:
 
         if isinstance(hat, InitializationHat):
             for block in hat.code:
+                # TODO: Handle non-code procedures in initialization hat (eg. variable declarations)
                 if isinstance(block, Function):
                     log_error("Cannot run function in initialization hat")
                     exit(1)
@@ -48,7 +49,7 @@ def process_hats(hats: list[Hat], project_cwd: str) -> list:
                                              fields={"BACKDROP": [hat.arguments[0], None]}))
 
             elif hat.on_keyword == "timer_greater_than":
-                if hat.arguments[0] >= 0:
+                if hat.arguments[0] >= 0:  # Timer cannot be negative
                     col.list.append(ScratchBlock(opcode="event_whengreaterthan",
                                                  inputs={"VALUE": [1, [1, hat.arguments[0]]]},
                                                  fields={"WHENGREATERTHANMENU": ["TIMER", None]}))
@@ -57,7 +58,7 @@ def process_hats(hats: list[Hat], project_cwd: str) -> list:
                     exit(1)
 
             elif hat.on_keyword == "loudness_greater_than":
-                if hat.arguments[0] >= 0:
+                if hat.arguments[0] >= 0:  # Loudness cannot be negative
                     col.list.append(ScratchBlock(opcode="event_whengreaterthan",
                                                  inputs={"VALUE": [1, [1, hat.arguments[0]]]},
                                                  fields={"WHENGREATERTHANMENU": ["LOUDNESS", None]}))
@@ -77,10 +78,12 @@ def process_hats(hats: list[Hat], project_cwd: str) -> list:
                 translate_block(block)
             transpiled.append(col.parse())
 
+    # TODO: Include resources/dango.svg (name="Dango") by default when no costume has been imported
     return transpiled
 
 
 def translate_block(block) -> dict | list:
+    # TODO: Include stantard Scratch blocks as Mesquite functions
     if isinstance(block, IfHat):
         pass
 
@@ -136,6 +139,7 @@ def parse_directives(prog: Program, project_cwd: str) -> list[Program] | None:
 
 def generate_project(prog: Program, project_cwd: str) -> ScratchProject:
     project = ScratchProject()
+    # TODO: Include code imported via 'use' to the project
 
     for component in prog.components:
         if isinstance(component, LibraryComponent):

@@ -78,6 +78,7 @@ def serialize_asset(asset: CostumeStatement | SoundStatement, project_cwd: str) 
             new_asset.rotationCenterX = 0
             new_asset.rotationCenterY = 0
         elif new_asset.dataFormat in ["png", "bmp", "jpg", "jpeg", "gif"]:
+            # TODO: Set proper resolution for raster costumes
             new_asset.bitmapResolution = 1
 
     elif isinstance(new_asset, Sound):

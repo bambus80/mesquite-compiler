@@ -7,6 +7,7 @@ from src.utils import pretty_print_program
 
 VERSION = "0.0.1a3"
 
+# TODO: Include tests !!!
 if __name__ == "__main__":
     print(f"\x1b[40;36m ━━━━━━ Mesquite Compiler version {VERSION} ━━━━━━")
     parser = argparse.ArgumentParser(prog='mesquite')
