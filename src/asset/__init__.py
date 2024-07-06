@@ -82,7 +82,9 @@ def serialize_asset(asset: CostumeStatement | SoundStatement, project_cwd: str) 
     elif isinstance(new_asset, Sound):
         if new_asset.dataFormat == "wav":
             sample_data = get_wav_sample_data(file_path)
-            new_asset.rate = sample_data[0]
-            new_asset.sampleCount = sample_data[1]
+        elif new_asset.dataFormat == "mp3":
+            sample_data = get_mp3_sample_data(file_path)
+        new_asset.rate = sample_data[0]
+        new_asset.sampleCount = sample_data[1]
 
     return new_asset
