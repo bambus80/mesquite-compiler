@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     input_dir = os.path.join(os.getcwd(), args.input)
 
-    project_cwd = os.path.abspath(input_dir)
+    project_cwd, _ = os.path.split(os.path.abspath(input_dir))
 
     with open(input_dir, 'r') as f:
         print(f"\x1b[40;36m {input_dir} \x1b[0;36m🭞🭜🭘\x1b[0m\nTokenizing...")

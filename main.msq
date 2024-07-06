@@ -1,4 +1,4 @@
-use foo;
+use "foo";
 use foo2 as bar;
 use "foo3" as qux;
 
@@ -31,7 +31,7 @@ stage {
 }
 
 sprite foosprite {
-    costume "foo.svg" as foocostume;
+    costume "../foo.svg" as foocostume;
     sound "pop.wav" as boom;
     init {
         global var custom_type x = 10;
