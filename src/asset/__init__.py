@@ -1,5 +1,7 @@
 import os
 import mimetypes
+from src.asset.sound import *
+from src.asset.costume import *
 from src.parsing.classes import CostumeStatement, SoundStatement
 from src.scratch3.classes import ScratchAsset, Costume, Sound
 from src.logging import *
@@ -76,11 +78,11 @@ def serialize_asset(asset: CostumeStatement | SoundStatement, project_cwd: str) 
             new_asset.rotationCenterX = 0
             new_asset.rotationCenterY = 0
         elif new_asset.dataFormat in ["png", "bmp", "jpg", "jpeg", "gif"]:
-            pass
+            new_asset.bitmapResolution = 1
     elif isinstance(new_asset, Sound):
         if new_asset.dataFormat == "wav":
-            # TODO: Set proper metadata for WAV sounds
-            new_asset.rate = 48000
-            new_asset.sampleCount = 0
+            sample_data = get_wav_sample_data(file_path)
+            new_asset.rate = sample_data[0]
+            new_asset.sampleCount = sample_data[1]
 
     return new_asset
