@@ -3,7 +3,7 @@ from src.parsing import parse
 from src.parsing.classes import *
 from src.scratch3.classes import *
 from src.scratch3.validate import *
-from src.utils import block_id
+from src.utils import block_id, pretty_print_program
 from src.asset import serialize_asset
 from src.logging import *
 
@@ -50,7 +50,7 @@ def parse_hat_code(code: list) -> None:
     pass
 
 
-def process_hats(hats: list[Hat], project_cwd: str) -> tuple[list, list]:
+def process_hats(hats: list[Hat], project_cwd: str, include_dango: bool = True) -> tuple[list, list]:
     transpiled_blocks: list = []
     transpiled_assets: list = []
     is_costume_added: bool = False
@@ -58,12 +58,12 @@ def process_hats(hats: list[Hat], project_cwd: str) -> tuple[list, list]:
     for hat in hats:
         col = BlockColumn()
 
-        if isinstance(hat, SpriteStatement):
+        if isinstance(hat, SpriteStatement):  # costume "costume_file" as costume_name
             if isinstance(hat, CostumeStatement):
                 is_costume_added = True
             transpiled_assets.append(serialize_asset(hat, project_cwd))
 
-        if isinstance(hat, InitializationHat):
+        if isinstance(hat, InitializationHat):  # init {}
             for block in hat.code:
                 # TODO: Handle non-code procedures in initialization hat (eg. variable declarations)
                 if isinstance(block, Function):
@@ -71,56 +71,49 @@ def process_hats(hats: list[Hat], project_cwd: str) -> tuple[list, list]:
                     exit(1)
 
         if isinstance(hat, OnHat):
-            # Create hats for on events
-            if hat.on_keyword == "green_flag_clicked":
+            if hat.on_keyword == "green_flag_clicked":  # on green_flag_clicked {}
                 col.list.append(ScratchBlock(opcode="event_whenflagclicked"))
 
-            elif hat.on_keyword == "key_pressed":
+            elif hat.on_keyword == "key_pressed":  # on key_pressed("key_name") {}
                 if is_valid_key(hat.arguments[0]):
                     col.list.append(ScratchBlock(opcode="event_whenkeypressed",
                                                  fields={"KEY_OPTION": [hat.arguments[0], None]}))
                 else:
                     log_error(f"{hat.arguments[0]} is not a valid key.")
                     exit(1)
-
-            elif hat.on_keyword == "sprite_clicked":
+            elif hat.on_keyword == "sprite_clicked":  # on sprite_clicked {}
                 col.list.append(ScratchBlock(opcode="event_whenthisspriteclicked"))
-
-            elif hat.on_keyword == "backdrop_switch_to":
+            elif hat.on_keyword == "backdrop_switch_to":  # on backdrop_switch_to {}
                 col.list.append(ScratchBlock(opcode="event_whenbackdropswitchesto",
                                              fields={"BACKDROP": [hat.arguments[0], None]}))
-
-            elif hat.on_keyword == "timer_greater_than":
-                if hat.arguments[0] >= 0:  # Timer cannot be negative
+            elif hat.on_keyword == "timer_greater_than":  # on timer_greater_than(5) {}
+                if hat.arguments[0] >= 0:
                     col.list.append(ScratchBlock(opcode="event_whengreaterthan",
                                                  inputs={"VALUE": [1, [1, hat.arguments[0]]]},
                                                  fields={"WHENGREATERTHANMENU": ["TIMER", None]}))
                 else:
                     log_error(f"{hat.arguments[0]} is not a valid timer value (must be 0 or above).")
                     exit(1)
-
-            elif hat.on_keyword == "loudness_greater_than":
-                if hat.arguments[0] >= 0:  # Loudness cannot be negative
+            elif hat.on_keyword == "loudness_greater_than":  # on timer_greater_than(20) {}
+                if hat.arguments[0] >= 0:
                     col.list.append(ScratchBlock(opcode="event_whengreaterthan",
                                                  inputs={"VALUE": [1, [1, hat.arguments[0]]]},
                                                  fields={"WHENGREATERTHANMENU": ["LOUDNESS", None]}))
                 else:
                     log_error(f"{hat.arguments[0]} is not a valid loudness value (must be 0 or above).")
                     exit(1)
-
-            elif hat.on_keyword == "receive_broadcast":
+            elif hat.on_keyword == "receive_broadcast":  # on receive_broadcast("brodadcast_name") {}
                 # TODO: Look up broadcast ID for "recieve_broadcast" event
                 col.list.append(ScratchBlock(opcode="event_whenbroadcastreceived",
                                              fields={"BROADCAST_OPTION": [hat.arguments[0], "TODO"]}))
-
-            elif hat.on_keyword == "clone_created":
+            elif hat.on_keyword == "clone_created":  # on clone_created {}
                 col.list.append(ScratchBlock(opcode="control_start_as_clone"))
 
             for block in hat.code:
                 translate_block(block)
             transpiled_blocks.append(col.parse())
 
-    if not is_costume_added:
+    if not is_costume_added and include_dango:
         transpiled_assets.append(serialize_asset(CostumeStatement(import_from="./resources/dango.svg",
                                                                   import_to="Dango",
                                                                   origin="int")))
@@ -190,13 +183,14 @@ def generate_project(prog: Program, project_cwd: str) -> ScratchProject:
         if isinstance(component, LibraryComponent):
             pass
 
-        elif isinstance(component, StageComponent) or isinstance(component, SpriteComponent):
-            target = None
+        elif isinstance(component, (StageComponent, SpriteComponent)):
             if isinstance(component, StageComponent):
                 target = Stage()
-            elif isinstance(component, SpriteComponent):
+            else:
                 target = Sprite(name=component.sprite)
-            transpiled = process_hats(component.hats, project_cwd)
+            transpiled = process_hats(component.hats,
+                                      project_cwd,
+                                      include_dango=isinstance(component, SpriteComponent))
             target.blocks = transpiled[0]
             for asset in transpiled[1]:
                 if isinstance(asset, Costume):
@@ -204,6 +198,7 @@ def generate_project(prog: Program, project_cwd: str) -> ScratchProject:
                 elif isinstance(asset, Sound):
                     target.sounds.append(asset)
             project.targets.append(target)
+            pretty_print_program(target)
 
         else:
             log_error(f"Unrecognized component: {type(component)}")
