@@ -1,5 +1,6 @@
 import os
 import mimetypes
+from shutil import copyfile
 from src.asset.sound import *
 from src.asset.costume import *
 from src.parsing.classes import CostumeStatement, SoundStatement
@@ -65,16 +66,11 @@ def serialize_asset(asset: CostumeStatement | SoundStatement, project_cwd: str =
     else:
         new_asset.name = os.path.splitext(asset.import_from)[0]  # Filename without extension
 
-    # Get MD5 hash of file
-    try:
-        with open(file_path, "rb") as file:
-            asset_md5 = md5ext(file.read())
-    except FileNotFoundError:
-        log_error(f"Could not access {file_path}")
-        exit(1)
+    asset_md5 = md5ext(file_path)
 
     new_asset.assetId = asset_md5
     new_asset.md5ext = f"{asset_md5}.{new_asset.dataFormat}"
+    copyfile(file_path, "../../build")
 
     if isinstance(new_asset, Costume):
         if new_asset.dataFormat == "svg":
