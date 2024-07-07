@@ -12,7 +12,7 @@ class ScratchBlock:
     inputs: dict = field(default_factory=dict)
     fields: dict = field(default_factory=dict)
     shadow: bool = False
-    topLevel: bool = True if not parent else False
+    topLevel: bool = False
 
 
 @dataclass
@@ -33,34 +33,49 @@ class BlockColumn:
 
             current_block.parent = parent_block.id
             current_block.next = next_block.id
+            current_block.topLevel = isinstance(current_block.parent, str)
             parsed.append(asdict(current_block))
         return parsed
 
 
-@dataclass
 class ScratchTarget:
-    isStage: bool = False
-    name: str = ""
-    variables: dict = field(default_factory=dict)
-    lists: dict = field(default_factory=dict)
-    broadcasts: dict = field(default_factory=dict)
-    blocks: dict = field(default_factory=dict)
-    comments: dict = field(default_factory=dict)
-    currentCostume: int = 0
-    costumes: list = field(default_factory=list)
-    sounds: list = field(default_factory=list)
-    layerOrder: int = 0
-    volume: float = 100
+    def __init__(self):
+        self.isStage: bool = False
+        self.name: str = ""
+        self.variables: dict = {}
+        self.lists: dict = {}
+        self.broadcasts: dict = {}
+        self.blocks: dict = {}
+        self.comments: dict = {}
+        self.currentCostume: int = 0
+        self.costumes: list = []
+        self.sounds: list = []
+        self.layerOrder: int = 0
+        self.volume: float = 100
+
+    def serialize(self):
+        self.blocks = [b.parse() for b in self.blocks]
+        self.costumes = [c.asdict() for c in self.costumes]
+        self.sounds = [s.asdict() for s in self.sounds]
+        return self
 
 
 @dataclass
 class Stage(ScratchTarget):
-    isStage: bool = True
-    name: str = "Stage"
     tempo: int = 60
     videoState: Literal["on", "off", "on-flipped"] = "off"
     videoTransparency: int = 50
     textToSpeechLanguage: str = "English"
+
+    def __init__(self, tempo: int = 60, videoState: Literal["on", "off", "on-flipped"] = "off",
+                 videoTransparency: int = 50, textToSpeechLanguage: str = "English"):
+        super().__init__()
+        self.isStage = True
+        self.name = "Stage"
+        self.tempo = tempo
+        self.videoState = videoState
+        self.videoTransparency = videoTransparency
+        self.textToSpeechLanguage = textToSpeechLanguage
 
 
 @dataclass
@@ -72,6 +87,19 @@ class Sprite(ScratchTarget):
     direction: float = 90
     draggable: bool = False
     rotationStyle: Literal["all around", "left-right", "don't rotate"] = "all around"
+
+    def __init__(self, name: str = "", visible: bool = True, x: float = 0, y: float = 0, size: float = 100,
+                 direction: float = 90, draggable: bool = False,
+                 rotationStyle: Literal["all around", "left-right", "don't rotate"] = "all around"):
+        super().__init__()
+        self.name = name
+        self.visible = visible
+        self.x = x
+        self.y = y
+        self.size = size
+        self.direction = direction
+        self.draggable = draggable
+        self.rotationStyle = rotationStyle
 
 
 @dataclass
@@ -107,13 +135,18 @@ class ScratchExtension:
     ...
 
 
-@dataclass
 class ScratchProject:
-    targets: list[ScratchTarget] = field(default_factory=list)
-    monitors: list[ScratchMonitor] = field(default_factory=list)
-    extensions: list[ScratchExtension] = field(default_factory=list)
-    meta = {
-        "semver": "3.0.0",
-        "vm": "0.0.0",
-        "agent": "",
-    }
+    def __init__(self):
+        self.targets: list[ScratchTarget] = []
+        self.monitors: list[ScratchMonitor] = []
+        self.extensions: list[ScratchExtension] = []
+        self.meta = {
+            "semver": "3.0.0",
+            "vm": "0.0.0",
+            "agent": "",
+        }
+
+    def serialize(self):
+        self.targets = [t.serialize() for t in self.targets]
+        self.extensions = [e.asdict() for e in self.extensions]
+        return self
