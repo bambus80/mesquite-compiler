@@ -7,9 +7,46 @@ from src.utils import block_id
 from src.asset import serialize_asset
 from src.logging import *
 
+project = ScratchProject()
+
+_builtin_funcs = [
+    # Category: Motion
+    "move",  # move(steps: number) -> null
+    "turn_right",  # turn_right(degrees: number) -> null
+    "turn_left",  # turn_left(degrees: number) -> null
+    # "goto_target,  # goto(t: target) -> null
+    "goto",  # goto(x: number, y: number) -> null
+    # "glide_to_target",  # glide_to_target(secs: number, t: target) -> null
+    "glide_to",  # glide_to(x: number, y: number, secs: number)
+    "point",  # point(degrees: number) -> null
+    # "point_towards",  # point_towards(t: target) -> null
+    "if_on_edge_bounce",
+    "rotation_style_left_right",
+    "rotation_style_no_rotation",
+    "rotation_style_all_around",
+
+    # Category: Looks
+    "say",  # say(in: text) -> null
+]
+
+builtin_funcs = {
+    "move": ScratchBlock(opcode="motion_movesteps")
+}
+
 
 def parse_hat_code(code: list) -> None:
     # TODO: Parse code inside hats
+    out: list[ScratchBlock] = []
+
+    for i in code:
+        if isinstance(i, VariableDefinition):
+            pass
+        elif isinstance(i, Function):
+            if i.name in builtin_funcs:
+                out.append(builtin_funcs[i.name])
+            else:
+                pass
+
     pass
 
 
@@ -147,7 +184,6 @@ def parse_directives(prog: Program, project_cwd: str) -> list[Program] | None:
 
 
 def generate_project(prog: Program, project_cwd: str) -> ScratchProject:
-    project = ScratchProject()
     # TODO: Include code imported via 'use' to the project
 
     for component in prog.components:

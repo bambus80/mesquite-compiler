@@ -31,7 +31,7 @@ convertible_sound_formats = {  # TODO: Convert sound formats to native ones
 }
 
 
-def serialize_asset(asset: CostumeStatement | SoundStatement, project_cwd: str) -> ScratchAsset:
+def serialize_asset(asset: CostumeStatement | SoundStatement, project_cwd: str = None) -> ScratchAsset:
     file_path = None
     if asset.origin == "ext":
         file_path = os.path.normpath(os.path.join(project_cwd, asset.import_from))

@@ -38,6 +38,7 @@ class VariableSet:
     operation: VariableSetOp
     expression: Any
 
+
 @dataclass
 class ListType:
     subtype: str
@@ -49,9 +50,17 @@ class CodeStatement:
 
 
 @dataclass
+class LiteralCodeStatement:
+    opcode: str
+    inputs: dict
+    fields: dict
+
+
+@dataclass
 class Function(CodeStatement):
     name: str
     arguments: Optional[List[Any]]
+
 
 @dataclass
 class VariableDefinition(CodeStatement):
@@ -66,21 +75,26 @@ class VariableDefinition(CodeStatement):
 class Hat:
     code: Optional[List[CodeStatement]]
 
+
 @dataclass
 class CodeStatementHat(Hat, CodeStatement):
     ...
+
 
 @dataclass
 class IfInner(CodeStatementHat):
     condition: MathExpr
 
+
 @dataclass
 class ElifInner(CodeStatementHat):
     condition: MathExpr
 
+
 @dataclass
 class ElseInner(CodeStatementHat):
     ...
+
 
 @dataclass
 class IfHat(CodeStatementHat):
@@ -92,6 +106,7 @@ class IfHat(CodeStatementHat):
 @dataclass
 class LoopHat(CodeStatementHat):
     arguments: Optional[List[Any]]
+
 
 @dataclass
 class ComponentHat(Hat):
@@ -109,10 +124,12 @@ class FunctionVariableDefinition:
     type: Union[str, ListType]
     optional: bool
 
+
 @dataclass
 class FunctionDefinitionHat(ComponentHat):
     vars: Optional[List[FunctionVariableDefinition]]
     name: str
+
 
 @dataclass
 class OnHat(ComponentHat):
