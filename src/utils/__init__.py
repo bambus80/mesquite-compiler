@@ -1,5 +1,6 @@
 from random import choices
 from hashlib import md5
+from src.logging import log_error
 import string
 
 
@@ -60,4 +61,8 @@ def block_id(length=18) -> str:
 
 
 def md5ext(path) -> str:
-    return md5(open(path, 'rb').read()).hexdigest()
+    try:
+        return md5(open(path, 'rb').read()).hexdigest()
+    except OSError:
+        log_error(f"Could not access file {path}")
+        exit(1)
