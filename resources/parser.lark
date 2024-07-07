@@ -1,8 +1,12 @@
 %import common.ESCAPED_STRING
 %import common.SIGNED_NUMBER
 %import common.WS
+%import common.C_COMMENT
+%import common.CPP_COMMENT
 
 %ignore WS
+%ignore C_COMMENT
+%ignore CPP_COMMENT
 
 ?start: entries*
 
@@ -38,9 +42,9 @@ hat_loop: keyword arguments? "{" code_stmts* "}" ";"?
 
 if_loop: if_loop_if if_loop_elif* if_loop_else? ";"?
 
-if_loop_if: "if" "("? expression ")"? "{" code_stmts* "}" 
-if_loop_elif: ("elif"|"elseif") "("? expression ")"? "{" code_stmts* "}" 
-if_loop_else: "else" "{" code_stmts* "}" 
+if_loop_if: "if" "("? expression ")"? "{" code_stmts* "}"
+if_loop_elif: ("elif"|"elseif") "("? expression ")"? "{" code_stmts* "}"
+if_loop_else: "else" "{" code_stmts* "}"
 
 code_stmts: variable_define
           | variable_set
