@@ -1,0 +1,15 @@
+// Official Mesquite Advanced library
+// Included with Mesquite Compiler
+// (W.I.P.)
+
+library {
+    struct vector2 {
+        x: number,
+        y: number
+    }
+    struct vector3 {
+        x: number,
+        y: number,
+        z: number
+    }
+}
