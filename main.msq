@@ -31,8 +31,8 @@ stage {
 }
 
 sprite foosprite {
-    costume "../foo.svg" as foocostume;
-    sound "pop.wav" as boom;
+    // costume "../foo.svg" as foocostume;
+    // sound "pop.wav" as boom;
     init {
         global var custom_type x = 10;
         x -= 2
