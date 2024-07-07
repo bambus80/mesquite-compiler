@@ -144,6 +144,7 @@ class SpriteComponent(ProgramComponent):
 class Statement:
     import_from: str
     import_to: str
+    origin: str = "ext"
 
 
 @dataclass

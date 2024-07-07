@@ -32,7 +32,11 @@ convertible_sound_formats = {  # TODO: Convert sound formats to native ones
 
 
 def serialize_asset(asset: CostumeStatement | SoundStatement, project_cwd: str) -> ScratchAsset:
-    file_path = os.path.normpath(os.path.join(project_cwd, asset.import_from))
+    file_path = None
+    if asset.origin == "ext":
+        file_path = os.path.normpath(os.path.join(project_cwd, asset.import_from))
+    elif asset.origin == "int":
+        file_path = os.path.normpath(os.path.join(os.getcwd(), asset.import_from))
     file_format, _ = mimetypes.guess_type(file_path)
 
     new_asset = None

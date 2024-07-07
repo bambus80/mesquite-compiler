@@ -13,13 +13,18 @@ def parse_hat_code(code: list) -> None:
     pass
 
 
-def process_hats(hats: list[Hat], project_cwd: str) -> list:
-    transpiled = []
+def process_hats(hats: list[Hat], project_cwd: str) -> tuple[list, list]:
+    transpiled_blocks: list = []
+    transpiled_assets: list = []
+    is_costume_added: bool = False
+
     for hat in hats:
         col = BlockColumn()
 
         if isinstance(hat, SpriteStatement):
-            serialize_asset(hat, project_cwd)
+            if isinstance(hat, CostumeStatement):
+                is_costume_added = True
+            transpiled_assets.append(serialize_asset(hat, project_cwd))
 
         if isinstance(hat, InitializationHat):
             for block in hat.code:
@@ -76,10 +81,14 @@ def process_hats(hats: list[Hat], project_cwd: str) -> list:
 
             for block in hat.code:
                 translate_block(block)
-            transpiled.append(col.parse())
+            transpiled_blocks.append(col.parse())
 
-    # TODO: Include resources/dango.svg (name="Dango") by default when no costume has been imported
-    return transpiled
+    if not is_costume_added:
+        transpiled_assets.append(serialize_asset(CostumeStatement(import_from="./resources/dango.svg",
+                                                                  import_to="Dango",
+                                                                  origin="int")))
+
+    return transpiled_blocks, transpiled_assets
 
 
 def translate_block(block) -> dict | list:
@@ -91,17 +100,17 @@ def translate_block(block) -> dict | list:
         pass
 
     elif isinstance(block, FunctionDefinitionHat):
-        definition_block_id = block_id
-        prototype_block_id = block_id
+        definition_block_id = block_id()
+        prototype_block_id = block_id()
         return [
             ScratchBlock(
-                definition_block_id, 
-                "procedures_definition",
+                id=definition_block_id,
+                opcode="procedures_definition",
                 inputs={"custom_block": [1, prototype_block_id]}
                 ),
             ScratchMutatedBlock(
-                prototype_block_id,
-                "procedures_prototype",
+                id=prototype_block_id,
+                opcode="procedures_prototype",
                 mutation={
                     "tagName": "mutation",
                     "children": [],
@@ -127,7 +136,7 @@ def parse_directives(prog: Program, project_cwd: str) -> list[Program] | None:
             try:
                 with open(file_path, "r") as directive_file:
                     parsed_directives.append(parse(directive_file.read()))
-            except FileNotFoundError:
+            except OSError:
                 log_error(f"Could not access {file_path}")
                 exit(1)
         else:
@@ -145,14 +154,19 @@ def generate_project(prog: Program, project_cwd: str) -> ScratchProject:
         if isinstance(component, LibraryComponent):
             pass
 
-        elif isinstance(component, StageComponent):
-            target = Stage()
-            target.blocks = process_hats(component.hats, project_cwd)
-            project.targets.append(target)
-
-        elif isinstance(component, SpriteComponent):
-            target = Sprite(name=component.sprite)
-            target.blocks = process_hats(component.hats, project_cwd)
+        elif isinstance(component, StageComponent) or isinstance(component, SpriteComponent):
+            target = None
+            if isinstance(component, StageComponent):
+                target = Stage()
+            elif isinstance(component, SpriteComponent):
+                target = Sprite(name=component.sprite)
+            transpiled = process_hats(component.hats, project_cwd)
+            target.blocks = transpiled[0]
+            for asset in transpiled[1]:
+                if isinstance(asset, Costume):
+                    target.costumes.append(asset)
+                elif isinstance(asset, Sound):
+                    target.sounds.append(asset)
             project.targets.append(target)
 
         else:
