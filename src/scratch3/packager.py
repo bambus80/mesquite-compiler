@@ -2,36 +2,13 @@ import os.path
 from src.parsing import parse
 from src.parsing.classes import *
 from src.scratch3.classes import *
+from src.scratch3.functions import builtin_funcs
 from src.scratch3.validate import *
 from src.utils import block_id, pretty_print_program
 from src.asset import serialize_asset
 from src.logging import *
 
 project = ScratchProject()
-
-_builtin_funcs = [
-    # Category: Motion
-    "move",  # move(steps: number) -> null
-    "turn_right",  # turn_right(degrees: number) -> null
-    "turn_left",  # turn_left(degrees: number) -> null
-    # "goto_target,  # goto(t: target) -> null
-    "goto",  # goto(x: number, y: number) -> null
-    # "glide_to_target",  # glide_to_target(secs: number, t: target) -> null
-    "glide_to",  # glide_to(x: number, y: number, secs: number)
-    "point",  # point(degrees: number) -> null
-    # "point_towards",  # point_towards(t: target) -> null
-    "if_on_edge_bounce",
-    "rotation_style_left_right",
-    "rotation_style_no_rotation",
-    "rotation_style_all_around",
-
-    # Category: Looks
-    "say",  # say(in: text) -> null
-]
-
-builtin_funcs = {
-    "move": ScratchBlock(opcode="motion_movesteps")
-}
 
 
 def parse_hat_code(code: list) -> None:
@@ -72,42 +49,42 @@ def process_hats(hats: list[Hat], project_cwd: str, include_dango: bool = True) 
 
         if isinstance(hat, OnHat):
             if hat.on_keyword == "green_flag_clicked":  # on green_flag_clicked {}
-                col.list.append(ScratchBlock(opcode="event_whenflagclicked"))
+                col.col.append(ScratchBlock(opcode="event_whenflagclicked"))
 
             elif hat.on_keyword == "key_pressed":  # on key_pressed("key_name") {}
                 if is_valid_key(hat.arguments[0]):
-                    col.list.append(ScratchBlock(opcode="event_whenkeypressed",
-                                                 fields={"KEY_OPTION": [hat.arguments[0], None]}))
+                    col.col.append(ScratchBlock(opcode="event_whenkeypressed",
+                                                fields={"KEY_OPTION": [hat.arguments[0], None]}))
                 else:
                     log_error(f"{hat.arguments[0]} is not a valid key.")
                     exit(1)
             elif hat.on_keyword == "sprite_clicked":  # on sprite_clicked {}
-                col.list.append(ScratchBlock(opcode="event_whenthisspriteclicked"))
+                col.col.append(ScratchBlock(opcode="event_whenthisspriteclicked"))
             elif hat.on_keyword == "backdrop_switch_to":  # on backdrop_switch_to {}
-                col.list.append(ScratchBlock(opcode="event_whenbackdropswitchesto",
-                                             fields={"BACKDROP": [hat.arguments[0], None]}))
+                col.col.append(ScratchBlock(opcode="event_whenbackdropswitchesto",
+                                            fields={"BACKDROP": [hat.arguments[0], None]}))
             elif hat.on_keyword == "timer_greater_than":  # on timer_greater_than(5) {}
                 if hat.arguments[0] >= 0:
-                    col.list.append(ScratchBlock(opcode="event_whengreaterthan",
-                                                 inputs={"VALUE": [1, [1, hat.arguments[0]]]},
-                                                 fields={"WHENGREATERTHANMENU": ["TIMER", None]}))
+                    col.col.append(ScratchBlock(opcode="event_whengreaterthan",
+                                                inputs={"VALUE": [1, [1, hat.arguments[0]]]},
+                                                fields={"WHENGREATERTHANMENU": ["TIMER", None]}))
                 else:
                     log_error(f"{hat.arguments[0]} is not a valid timer value (must be 0 or above).")
                     exit(1)
             elif hat.on_keyword == "loudness_greater_than":  # on timer_greater_than(20) {}
                 if hat.arguments[0] >= 0:
-                    col.list.append(ScratchBlock(opcode="event_whengreaterthan",
-                                                 inputs={"VALUE": [1, [1, hat.arguments[0]]]},
-                                                 fields={"WHENGREATERTHANMENU": ["LOUDNESS", None]}))
+                    col.col.append(ScratchBlock(opcode="event_whengreaterthan",
+                                                inputs={"VALUE": [1, [1, hat.arguments[0]]]},
+                                                fields={"WHENGREATERTHANMENU": ["LOUDNESS", None]}))
                 else:
                     log_error(f"{hat.arguments[0]} is not a valid loudness value (must be 0 or above).")
                     exit(1)
-            elif hat.on_keyword == "receive_broadcast":  # on receive_broadcast("brodadcast_name") {}
-                # TODO: Look up broadcast ID for "recieve_broadcast" event
-                col.list.append(ScratchBlock(opcode="event_whenbroadcastreceived",
-                                             fields={"BROADCAST_OPTION": [hat.arguments[0], "TODO"]}))
+            elif hat.on_keyword == "receive_broadcast":  # on receive_broadcast("broadcast_name") {}
+                # TODO: Look up broadcast ID for "receive_broadcast" event
+                col.col.append(ScratchBlock(opcode="event_whenbroadcastreceived",
+                                            fields={"BROADCAST_OPTION": [hat.arguments[0], "TODO"]}))
             elif hat.on_keyword == "clone_created":  # on clone_created {}
-                col.list.append(ScratchBlock(opcode="control_start_as_clone"))
+                col.col.append(ScratchBlock(opcode="control_start_as_clone"))
 
             for block in hat.code:
                 translate_block(block)
@@ -137,7 +114,7 @@ def translate_block(block) -> dict | list:
                 id=definition_block_id,
                 opcode="procedures_definition",
                 inputs={"custom_block": [1, prototype_block_id]}
-                ),
+            ),
             ScratchMutatedBlock(
                 id=prototype_block_id,
                 opcode="procedures_prototype",

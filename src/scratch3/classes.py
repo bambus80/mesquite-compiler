@@ -21,15 +21,17 @@ class ScratchMutatedBlock(ScratchBlock):
 
 
 class BlockColumn:
-    def __init__(self) -> None:
-        self.list: list[ScratchBlock] = []
+    def __init__(self, col=None) -> None:
+        if col is None:
+            col = []
+        self.col: list[ScratchBlock] = col
 
     def parse(self) -> list:
         parsed: list[dict] = []
-        for i in range(0, len(self.list) - 1):
-            parent_block = self.list[i - 1] if i > 0 else None
-            current_block = self.list[i]
-            next_block = self.list[i + 1] if i <= len(self.list) - 1 else None
+        for i in range(0, len(self.col) - 1):
+            parent_block = self.col[i - 1] if i > 0 else None
+            current_block = self.col[i]
+            next_block = self.col[i + 1] if i <= len(self.col) - 1 else None
 
             current_block.parent = parent_block.id
             current_block.next = next_block.id
