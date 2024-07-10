@@ -1,5 +1,6 @@
+from collections import Counter
 from src.scratch3.classes import ScratchBlock, ScratchMutatedBlock, BlockColumn
-from src.parsing.classes import Function, FunctionDefinitionHat, FunctionVariableDefinition
+from src.parsing.classes import Function, FunctionDefinitionHat, FunctionVariableDefinition, VariableCall
 from src.logging import log_error
 
 
@@ -77,7 +78,7 @@ builtin_funcs = {
                                       fields={"STOP_OPTION": ["other scripts in sprite", None]},
                                       mutation={"tagName": "mutation",
                                                 "children": [],
-                                                "hasnext": "false"}),
+                                                "hasnext": "true"}),
     # stop_all() -> null
     "stop_all": ScratchMutatedBlock(opcode="ocontrol_stop",
                                     fields={"STOP_OPTION": ["all", None]},
@@ -113,6 +114,30 @@ class FunctionConstructor:
         else:
             log_error(f"Function {func.name} is not defined.")
             exit(1)
+
+    def insert_args(self, block: ScratchBlock, args: dict) -> ScratchBlock:
+        """
+        Inserts proper arguments defined in argc to a block.
+        :param block: ScratchBlock
+        :param args: dict containing arguments
+        :return: ScratchBlock with added parameters
+        """
+        if Counter(block.inputs.keys()) == Counter(args.keys()):
+            log_error(f"Not enough parameters provided to function.\nExpected: {block.inputs.keys()}\n     Got:{args.keys()}")
+            exit(1)
+        returned_block = block
+        """
+        Argument cases:
+        1. [1-3, [4-10, value]] = Insert value to block
+        2. [1-3, [12, var-name, var-id], [default, default]] = Insert variable to block
+        """
+        for arg in args:
+            # TODO: Check type of values provided to functions
+            if isinstance(arg[arg], VariableCall):
+                returned_block.inputs[arg] = [args[arg].name, ""]
+            elif isinstance(args[arg], str):
+                returned_block.inputs[arg][1][1] = args[arg]  # {"ARG_NAME": [1, [10, "here"]]}
+        return returned_block
 
     def define(self, func: FunctionDefinitionHat) -> tuple[BlockColumn, BlockColumn]:
         # TODO: Define custom functions

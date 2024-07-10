@@ -2,7 +2,7 @@ import os.path
 from src.parsing import parse
 from src.parsing.classes import *
 from src.scratch3.classes import *
-from src.scratch3.functions import builtin_funcs
+from src.scratch3.functions import builtin_funcs, FunctionConstructor
 from src.scratch3.validate import *
 from src.utils import block_id, pretty_print_program
 from src.asset import serialize_asset
@@ -13,14 +13,15 @@ project = ScratchProject()
 
 def parse_hat_code(code: list) -> None:
     # TODO: Parse code inside hats
-    out: list[ScratchBlock] = []
+    constructor = FunctionConstructor()
+    out = BlockColumn()
 
     for i in code:
         if isinstance(i, VariableDefinition):
             pass
         elif isinstance(i, Function):
             if i.name in builtin_funcs:
-                out.append(builtin_funcs[i.name])
+                pass
             else:
                 pass
 
