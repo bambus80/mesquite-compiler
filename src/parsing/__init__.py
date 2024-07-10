@@ -51,10 +51,20 @@ class Reformatter(Transformer):
     def type_custom(self, s):
         return f"!type_!custom_{s[0]}"
 
+    def find_variable_type(self, name):
+        definition = self.find_variable_definition(name)
+        return definition.var_typing
+
     def variable_define(self, argtuple):
         if argtuple[2].startswith("!type_"):
             return VariableDefinition(argtuple[3], argtuple[2][6:], argtuple[1], argtuple[0], argtuple[4] or None)
         return VariableDefinition(argtuple[2], "value", argtuple[1], argtuple[0], argtuple[3] or None)
+
+    def variable_call(self, s):
+        name = s[0]
+        var_type = self.find_variable_type(name)
+        referenced_definition = self.find_variable_definition(name)
+        return VariableCall(name, var_type, referenced_definition)
 
     def hat_init(self, s):
         return InitializationHat(s)

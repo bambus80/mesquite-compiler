@@ -72,6 +72,13 @@ class VariableDefinition(CodeStatement):
 
 
 @dataclass
+class VariableCall:
+    name: str
+    var_type: str
+    referenced_definition: VariableDefinition
+
+
+@dataclass
 class Hat:
     code: Optional[List[CodeStatement]]
 
