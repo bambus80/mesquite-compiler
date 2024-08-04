@@ -1,8 +1,8 @@
 # Mesquite Compiler
-A Python compiler for the Mesquite programming language, designed to compile typed code to Scratch 3 sprites.
+A Python compiler for the Mesquite programming language, designed to compile typed code to Scratch 3 projects and sprites.
 
 ### Important
-This compiler is not yet functional. There's also no documentation for it as in this stage of development, it would be kinda useless to type one in and the grammar of the language is still in development.
+This compiler is not yet functional. Documentation will be avaliable soon.
 
 ### Usage
-`main.py -f /path/to/file.msq`
+`main.py -i /path/to/file.msq -o project.sb3`

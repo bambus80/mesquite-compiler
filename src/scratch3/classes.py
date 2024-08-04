@@ -56,13 +56,24 @@ class ScratchTarget:
         self.volume: float = 100
 
     def serialize(self):
-        self.blocks = [b.parse() for b in self.blocks]
-        self.costumes = [c.asdict() for c in self.costumes]
-        self.sounds = [s.asdict() for s in self.sounds]
-        return self
+        self.blocks = [b for b in self.blocks]
+        self.costumes = [asdict(c) for c in self.costumes]
+        self.sounds = [asdict(s) for s in self.sounds]
+        return {"isStage": self.isStage,
+                "name": self.name,
+                "variables": self.variables,
+                "lists": self.lists,
+                "broadcasts": self.broadcasts,
+                "blocks": self.blocks,
+                "comments": self.comments,
+                "currentCostume": self.currentCostume,
+                "costumes": self.costumes,
+                "sounds": self.sounds,
+                "layerOrder": self.layerOrder,
+                "volume": self.volume
+                }
 
 
-@dataclass
 class Stage(ScratchTarget):
     tempo: int = 60
     videoState: Literal["on", "off", "on-flipped"] = "off"
@@ -79,8 +90,29 @@ class Stage(ScratchTarget):
         self.videoTransparency = videoTransparency
         self.textToSpeechLanguage = textToSpeechLanguage
 
+    def serialize(self):
+        self.blocks = [b for b in self.blocks]
+        self.costumes = [asdict(c) for c in self.costumes]
+        self.sounds = [asdict(s) for s in self.sounds]
+        return {"isStage": self.isStage,
+                "name": self.name,
+                "variables": self.variables,
+                "lists": self.lists,
+                "broadcasts": self.broadcasts,
+                "blocks": self.blocks,
+                "comments": self.comments,
+                "currentCostume": self.currentCostume,
+                "costumes": self.costumes,
+                "sounds": self.sounds,
+                "layerOrder": self.layerOrder,
+                "volume": self.volume,
+                "tempo": self.tempo,
+                "videoState": self.videoState,
+                "videoTransparency": self.videoTransparency,
+                "textToSpeechLanguage": self.textToSpeechLanguage
+                }
 
-@dataclass
+
 class Sprite(ScratchTarget):
     visible: bool = True
     x: float = 0
@@ -102,6 +134,31 @@ class Sprite(ScratchTarget):
         self.direction = direction
         self.draggable = draggable
         self.rotationStyle = rotationStyle
+
+    def serialize(self):
+        self.blocks = [b for b in self.blocks]
+        self.costumes = [asdict(c) for c in self.costumes]
+        self.sounds = [asdict(s) for s in self.sounds]
+        return {"isStage": self.isStage,
+                "name": self.name,
+                "variables": self.variables,
+                "lists": self.lists,
+                "broadcasts": self.broadcasts,
+                "blocks": self.blocks,
+                "comments": self.comments,
+                "currentCostume": self.currentCostume,
+                "costumes": self.costumes,
+                "sounds": self.sounds,
+                "layerOrder": self.layerOrder,
+                "volume": self.volume,
+                "visible": self.visible,
+                "x": self.x,
+                "y": self.y,
+                "size": self.size,
+                "direction": self.direction,
+                "draggable": self.draggable,
+                "rotationStyle": self.rotationStyle
+                }
 
 
 @dataclass
@@ -148,7 +205,10 @@ class ScratchProject:
             "agent": "",
         }
 
-    def serialize(self):
+    def serialize(self) -> dict:
         self.targets = [t.serialize() for t in self.targets]
-        self.extensions = [e.asdict() for e in self.extensions]
-        return self
+        self.extensions = [asdict(e) for e in self.extensions]
+        return {"targets": self.targets,
+                "monitors":[],
+                "extensions": self.extensions,
+                "meta": self.meta}

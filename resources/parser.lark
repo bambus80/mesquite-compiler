@@ -65,6 +65,7 @@ expression: (string | number)
           | FALSE -> false
           | math_expr
           | array
+          | variable_call
           | keyword
 
 TRUE.6: "true" | "True"
@@ -102,3 +103,7 @@ type.-1   : "number" -> type_number
           | "bool" -> type_bool
           | "value"|"any" -> type_value
           | keyword -> type_custom
+
+variable_call: keyword_call
+
+keyword_call: ("a".."z"|"0".."9"| "_")+

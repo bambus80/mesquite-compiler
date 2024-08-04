@@ -1,6 +1,6 @@
-// Official Mesquite Advanced library
-// Included with Mesquite Compiler
-// (W.I.P.)
+/* Official Mesquite Advanced library
+   Included with Mesquite Compiler
+   by bambus80 | (W.I.P.) */
 
 library {
     struct vector2 {
@@ -11,5 +11,9 @@ library {
         x: number,
         y: number,
         z: number
+    }
+
+    macro goto_v2(vec: vector2) {
+        goto_xy(vec.x, vec.y);
     }
 }

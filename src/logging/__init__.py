@@ -12,3 +12,7 @@ def log_error(msg: str, line: Optional[str] = None, idx: Optional[int] = None) -
     print(f"\033[31mERROR:\033[0m {msg}")
     if line and idx:
         print(f"    {idx} | {line}")
+
+
+def log_info(msg: str) -> None:
+    print(f"\033[94mINFO:\033[0m {msg}")

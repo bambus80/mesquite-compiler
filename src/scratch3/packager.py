@@ -16,15 +16,20 @@ def parse_hat_code(code: list) -> None:
     constructor = FunctionConstructor()
     out = BlockColumn()
 
-    for i in code:
-        if isinstance(i, VariableDefinition):
+    for piece in code:
+        if isinstance(piece, VariableDefinition):
             pass
-        elif isinstance(i, Function):
-            if i.name in builtin_funcs:
-                pass
-            else:
-                pass
-
+        elif isinstance(piece, Function):
+            block = constructor.construct(piece)
+            block_inputs = {}
+            for i in range(0, len(block.inputs.keys())):
+                input_key = block_inputs.keys()[i]
+                if isinstance(piece.arguments[i], str):
+                    block_inputs[input_key] = piece.arguments[i]
+                elif isinstance(piece.arguments[i], VariableCall):
+                    # TODO: Handle variable calls in packaging
+                    pass
+            out.col.append(block)
     pass
 
 
@@ -92,6 +97,7 @@ def process_hats(hats: list[Hat], project_cwd: str, include_dango: bool = True) 
             transpiled_blocks.append(col.parse())
 
     if not is_costume_added and include_dango:
+        # Include Dango if no costumes are detected
         transpiled_assets.append(serialize_asset(CostumeStatement(import_from="./resources/dango.svg",
                                                                   import_to="Dango",
                                                                   origin="int")))

@@ -10,6 +10,18 @@ from src.utils import pretty_print_program
 
 
 class Reformatter(Transformer):
+    def __init__(self):
+        self.scopes = [{}]
+
+    def push_scope(self):
+        self.scopes.append({})
+
+    def pop_scope(self):
+        self.scopes.pop()
+
+    def current_scope(self):
+        return self.scopes[-1]
+
     def true(self, s):
         return True
 
@@ -51,6 +63,15 @@ class Reformatter(Transformer):
     def type_custom(self, s):
         return f"!type_!custom_{s[0]}"
 
+    def define_variable(self, name, definition):
+        self.current_scope()[name] = definition
+
+    def find_variable_definition(self, name):
+        for scope in reversed(self.scopes):
+            if name in scope:
+                return scope[name]
+        raise ValueError(f"Undefined variable: {name}")
+
     def find_variable_type(self, name):
         definition = self.find_variable_definition(name)
         return definition.var_typing
@@ -60,7 +81,7 @@ class Reformatter(Transformer):
             return VariableDefinition(argtuple[3], argtuple[2][6:], argtuple[1], argtuple[0], argtuple[4] or None)
         return VariableDefinition(argtuple[2], "value", argtuple[1], argtuple[0], argtuple[3] or None)
 
-    def variable_call(self, s):
+    def keyword_call(self, s):
         name = s[0]
         var_type = self.find_variable_type(name)
         referenced_definition = self.find_variable_definition(name)

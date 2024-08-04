@@ -14,17 +14,17 @@ builtin_funcs = {
     # turn_left(degrees: number) -> null
     "turn_left": ScratchBlock(opcode="motion_turnleft",
                               inputs={"STEPS": [3, [4, ""]] }),
-    # goto(x: number, y: number) -> null
-    "goto": ScratchBlock(opcode="motion_gotoxy",
-                         inputs={"X": [3, [4, ""]],
-                                 "Y": [3, [4, ""]]
-                                 }),
-    # glide_to(x: number, y: number, secs: number) -> null
-    "glide_to": ScratchBlock(opcode="motion_glidesecstoxy",
-                             inputs={"SECS": [3, [4, ""]],
-                                     "X": [3, [4, ""]],
-                                     "Y": [3, [4, ""]]
-                                     }),
+    # goto_xy(x: number, y: number) -> null
+    "goto_xy": ScratchBlock(opcode="motion_gotoxy",
+                            inputs={"X": [3, [4, ""]],
+                                    "Y": [3, [4, ""]]
+                                    }),
+    # glide_to_xy(x: number, y: number, secs: number) -> null
+    "glide_to_xy": ScratchBlock(opcode="motion_glidesecstoxy",
+                                inputs={"SECS": [3, [4, ""]],
+                                        "X": [3, [4, ""]],
+                                        "Y": [3, [4, ""]]
+                                        }),
     # point(degrees: number) -> null
     "point": ScratchBlock(opcode="motion_pointindirection",
                           inputs={"TOWARDS": [3, [4, ""]] }),
@@ -91,9 +91,12 @@ builtin_funcs = {
     # ask(question: text) -> null
     "ask": ScratchBlock(opcode="sensing_askandwait",
                         inputs={"QUESTION": [1, [10, ""]] }),
-    # set_drag(mode: text["draggable", "not draggable"]) -> null
-    "set_drag": ScratchBlock(opcode="sensing_setdragmode",
-                             inputs={"DRAG_MODE": [1, [10, ""]]})
+    # set_drag_draggable() -> null
+    "set_drag_draggable": ScratchBlock(opcode="sensing_setdragmode",
+                                       inputs={"DRAG_MODE": [1, [10, "draggable"]]}),
+    # set_drag_not_draggable() -> null
+    "set_drag_not_draggable": ScratchBlock(opcode="sensing_setdragmode",
+                                           inputs={"DRAG_MODE": [1, [10, " not draggable"]]}),
 }
 
 

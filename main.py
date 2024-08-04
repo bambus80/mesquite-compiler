@@ -1,4 +1,5 @@
 from src.parsing import parse
+from src.logging import *
 from src.scratch3.packager import generate_project
 from json import JSONEncoder
 import os
@@ -15,6 +16,7 @@ if __name__ == "__main__":
     # TODO: Add support for compiling standalone Scratch sprites
     parser.add_argument('-i', '--input', type=str, required=False, default="./main.msq")
     parser.add_argument('-o', '--output', type=str, required=False, default="./main.sb3")
+    parser.add_argument('-w', '--warnings', type=str, required=False, default="medium")
     args = parser.parse_args()
 
     input_dir = os.path.normpath(os.path.join(os.getcwd(), args.input))
@@ -23,10 +25,11 @@ if __name__ == "__main__":
 
     with open(input_dir, 'r') as f:
         print(f"\x1b[40;36m {input_dir} \x1b[0;36m🭞🭜🭘\x1b[0m\nTokenizing...")
+        log_info("Parsing entry file")
         tree = parse(f.read())
         # pretty_print_program(tree)
 
-    print("Transpiling...")
+    log_info("Transpiling entry file")
     project = generate_project(tree, project_cwd)
 
     with open("./build/project.json", "w") as project_json:
