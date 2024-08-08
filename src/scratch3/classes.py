@@ -47,7 +47,7 @@ class ScratchTarget:
         self.variables: dict = {}
         self.lists: dict = {}
         self.broadcasts: dict = {}
-        self.blocks: dict = {}
+        self.blocks: BlockColumn = BlockColumn
         self.comments: dict = {}
         self.currentCostume: int = 0
         self.costumes: list = []
@@ -56,7 +56,6 @@ class ScratchTarget:
         self.volume: float = 100
 
     def serialize(self):
-        self.blocks = [b for b in self.blocks]
         self.costumes = [asdict(c) for c in self.costumes]
         self.sounds = [asdict(s) for s in self.sounds]
         return {"isStage": self.isStage,
@@ -64,7 +63,7 @@ class ScratchTarget:
                 "variables": self.variables,
                 "lists": self.lists,
                 "broadcasts": self.broadcasts,
-                "blocks": self.blocks,
+                "blocks": self.blocks.parse(),
                 "comments": self.comments,
                 "currentCostume": self.currentCostume,
                 "costumes": self.costumes,
@@ -91,7 +90,6 @@ class Stage(ScratchTarget):
         self.textToSpeechLanguage = textToSpeechLanguage
 
     def serialize(self):
-        self.blocks = [b for b in self.blocks]
         self.costumes = [asdict(c) for c in self.costumes]
         self.sounds = [asdict(s) for s in self.sounds]
         return {"isStage": self.isStage,
@@ -99,7 +97,7 @@ class Stage(ScratchTarget):
                 "variables": self.variables,
                 "lists": self.lists,
                 "broadcasts": self.broadcasts,
-                "blocks": self.blocks,
+                "blocks": self.blocks.parse(),
                 "comments": self.comments,
                 "currentCostume": self.currentCostume,
                 "costumes": self.costumes,
@@ -136,7 +134,6 @@ class Sprite(ScratchTarget):
         self.rotationStyle = rotationStyle
 
     def serialize(self):
-        self.blocks = [b for b in self.blocks]
         self.costumes = [asdict(c) for c in self.costumes]
         self.sounds = [asdict(s) for s in self.sounds]
         return {"isStage": self.isStage,
@@ -144,7 +141,7 @@ class Sprite(ScratchTarget):
                 "variables": self.variables,
                 "lists": self.lists,
                 "broadcasts": self.broadcasts,
-                "blocks": self.blocks,
+                "blocks": self.blocks.parse(),
                 "comments": self.comments,
                 "currentCostume": self.currentCostume,
                 "costumes": self.costumes,
